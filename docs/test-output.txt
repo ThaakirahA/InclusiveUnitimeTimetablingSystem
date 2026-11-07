@@ -1,0 +1,51 @@
+Inclusive UniTime - automated test output
+Run date: 2026-11-07 | Node v22.23.4 | jsdom 31.0.0 | axe-core 4.14.0
+Scope: unit + integration tests run on the real source files; system tests run the real index.html in jsdom (a DOM simulation, NOT a real browser).
+Not covered here: colour contrast (jsdom has no layout/canvas), Lighthouse, real keyboard use, 375px/1280px rendering. Those are manual tests - see docs/manual-test-log.md.
+------------------------------------------------------------
+inclusive-unitime@1.0.0 test
+node --test --test-reporter=spec tests/*.test.js
+✔ IT-01 [FR01] login accepts valid credentials; rejects bad password and wrong role; ID is case-insensitive (484.718974ms)
+✔ IT-02 [FR04,FR03] staff update changes venue and notifies only enrolled students (485.636696ms)
+✔ IT-03 [FR04,SEC] students and anonymous callers cannot update the timetable (1.502142ms)
+✔ IT-04 [FR04] server-side collision and empty-venue checks leave data unchanged (0.825143ms)
+✔ IT-05 [FR03] mark-as-read affects only the chosen / visible notifications (362.862408ms)
+✔ IT-06 [FR04,NFR] edits persist across reload and demo data can be restored (122.928945ms)
+✔ UT-01 [FR02] day filter returns only Monday entries (2.341813ms)
+✔ UT-02 [FR02] module AND venue filters must both match (2.060692ms)
+✔ UT-03 [FR02] time filter splits morning and afternoon (0.991917ms)
+✔ UT-04 [FR02] no filters returns all; impossible combination returns empty list (0.788116ms)
+✔ UT-05 [FR02] search text is case-insensitive over module and venue (0.799129ms)
+✔ UT-06 [FR04] slot end time is start + 2 hours (0.823345ms)
+✔ UT-07 [FR04] collision detected for another class in same slot, not for itself (0.942052ms)
+✔ UT-08 [FR01] timetable is personalised per student; staff see everything (0.809166ms)
+✔ UT-09 [FR03] notifications are routed to enrolled students only (2.207903ms)
+✔ UT-10 [FR01] next-class countdown, including wrap to next week (1.468298ms)
+✔ ST-01 [FR01,NFR-02] student sign-in shows personalised dashboard, one h1, focus on main (549.304604ms)
+✔ ST-02 [FR01] invalid password shows an associated error and stays signed out (208.243485ms)
+✔ ST-03 [FR02] Monday filter lists only Monday classes (403.836857ms)
+✔ ST-04 [FR02] module+venue filters combine; no match shows accessible empty state (475.619501ms)
+✔ ST-05 [FR03] marking one notification read lowers the unread badge 2 -> 1 (531.346296ms)
+✔ ST-06 [FR04,FR03] staff edit succeeds, shows confirmation and a new alert (572.801043ms)
+✔ ST-07 [FR04] staff slot collision is blocked with an explanation and focus moves to the time slot (555.401585ms)
+✔ ST-08 [FR05,NFR-03] text size and high contrast apply immediately and persist (501.517803ms)
+   axe violations on login: none
+✔ ST-09 [NFR-02..04] axe-core rules (colour-contrast excluded) on login (266.027191ms)
+   axe violations on dashboard: none
+✔ ST-09 [NFR-02..04] axe-core rules (colour-contrast excluded) on dashboard (645.703119ms)
+   axe violations on timetable: none
+✔ ST-09 [NFR-02..04] axe-core rules (colour-contrast excluded) on timetable (736.815347ms)
+   axe violations on notifications: none
+✔ ST-09 [NFR-02..04] axe-core rules (colour-contrast excluded) on notifications (572.341814ms)
+   axe violations on accessibility: none
+✔ ST-09 [NFR-02..04] axe-core rules (colour-contrast excluded) on accessibility (606.619389ms)
+   axe violations on help: none
+✔ ST-09 [NFR-02..04] axe-core rules (colour-contrast excluded) on help (532.857328ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9338.174879

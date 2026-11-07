@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inclusive UniTime</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="root"></div>
+<!-- Vendor libraries (pinned versions) -->
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<!-- Application scripts: order matters (data -> logic -> api -> preferences -> components -> app) -->
+<script src="js/data.js"></script>
+<script src="js/logic.js"></script>
+<script src="js/api.js"></script>
+<script src="js/preferences.js"></script>
+<script src="js/components/common.js"></script>
+<script src="js/components/login.js"></script>
+<script src="js/components/student.js"></script>
+<script src="js/components/settings.js"></script>
+<script src="js/components/staff.js"></script>
+<script src="js/components/app.js"></script>
+</body>
+</html>
