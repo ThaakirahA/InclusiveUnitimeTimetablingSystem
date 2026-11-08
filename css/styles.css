@@ -112,3 +112,6 @@ fieldset{border:0;padding:0;margin:0 0 1rem}legend{font-weight:700;color:var(--n
  .top{padding:.6rem 1rem;gap:.6rem}.mlogo{display:grid;width:2.2rem;height:2.2rem}.wn{display:none}.bell{margin-left:0}.out.lo-top,.lo-top{display:inline-block}
  main{padding:1rem 1rem 6rem}h1,h2{font-size:1.6rem}.tbl{display:none}.cards{display:grid}.roles{grid-template-columns:1fr}
 }
+
+/* DEF-008: separate day/time, module and venue in timetable cards */
+.cards li { display: flex; flex-direction: column; gap: .25rem; }
