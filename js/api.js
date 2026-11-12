@@ -1,0 +1,18 @@
+/* API / SERVICE LAYER - simulated endpoints with role and collision checks (Design 3.2.3, 7.1.2, 8.3) */
+const persistDemo=()=>{try{localStorage.setItem('ut-demo-data',JSON.stringify({classes:DB.classes,notifications:DB.notifications,exams:DB.exams}))}catch(e){}};
+let seq=0;const nid=()=>"n"+Date.now()+"-"+(seq++),needStaff=u=>{if(!u||u.role!=="staff")throw new Error("Unauthorised: staff role required")};
+const lag=v=>new Promise(r=>setTimeout(()=>r(structuredClone(v)),120));
+const api={
+ login:async(role,id,pw)=>{await lag(0);const u=DB.users.find(x=>x.role===role&&x.id.toLowerCase()===id.trim().toLowerCase()&&x.pw===pw);return u?{id:u.id,role:u.role,name:u.name}:null},
+ getClasses:u=>lag(DB.classes.filter(c=>seeC(c,u))),getExams:u=>lag(visibleExams(DB.exams,u)),getNotifications:u=>lag(DB.notifications.filter(n=>seeN(n,u))),
+ markRead:(id,u)=>{DB.notifications.forEach(n=>{if(seeN(n,u)&&(!id||n.id===id))n.read=true});persistDemo();return lag(DB.notifications.filter(n=>seeN(n,u)))},
+ updateClass:(f,u)=>{if(!u||u.role!=="staff")throw new Error("Unauthorised: staff role required");const c=DB.classes.find(x=>x.id===f.id);if(!c)throw new Error("Class not found");if(!f.venue||!f.venue.trim())throw new Error("Venue required");if(findCollision(DB.classes,f))throw new Error("Slot collision");Object.assign(c,{day:f.day,start:f.start,end:endOf(f.start),venue:f.venue.trim()});
+  DB.notifications.unshift({id:"n"+Date.now(),cid:c.id,kind:"tt",title:"Timetable update",body:`${c.module} is now on ${c.day}, ${c.start}–${c.end} in ${c.venue}.${f.msg?" "+f.msg:""}`,time:"Just now",ts:Date.now(),read:false});
+  persistDemo();return lag({classes:DB.classes,notes:DB.notifications})},
+ cancelClass:(id,cancel,u)=>{needStaff(u);const c=DB.classes.find(x=>x.id===id);if(!c)throw new Error("Class not found");if(!cancel&&findCollision(DB.classes,c))throw new Error("Slot collision");c.cancelled=!!cancel;
+  DB.notifications.unshift({id:nid(),cid:c.id,kind:"tt",title:cancel?"Class cancelled":"Class reinstated",body:`${c.module} on ${c.day}, ${c.start}–${c.end} (${c.venue}) is ${cancel?"cancelled":"back on"}.`,time:"Just now",ts:Date.now(),read:false});
+  persistDemo();return lag({classes:DB.classes,notes:DB.notifications})},
+ announce:(f,u)=>{needStaff(u);const t=String(f&&f.title||"").trim(),b=String(f&&f.body||"").trim();if(!t||!b)throw new Error("Title and message required");if(t.length>80||b.length>300)throw new Error("Announcement too long");
+  DB.notifications.unshift({id:nid(),kind:"gen",title:t,body:b,time:"Just now",ts:Date.now(),read:false});  persistDemo();return lag({classes:DB.classes,notes:DB.notifications})},
+ saveExam:(form,u)=>{needStaff(u);const e={...form,date:normalizeExamDate(form.date),venue:String(form.venue||"").trim()};validExam(e);const conflict=examConflict(DB.exams,e);if(conflict)throw new Error("Exam conflict: "+conflict.module+" on "+conflict.date+" (same stream or venue). ");const old=DB.exams.find(x=>x.id===e.id);if(old)Object.assign(old,e);else{e.id="e"+Date.now()+"-"+(seq++);DB.exams.push(e)}DB.notifications.unshift({id:nid(),kind:"exam",stream:e.stream,title:old?"Exam timetable updated":"New exam scheduled",body:e.module+" — "+e.date+", "+e.start+"–"+e.end+", "+e.venue+" ("+e.stream+").",ts:Date.now(),read:false});persistDemo();return lag({exams:DB.exams,notes:DB.notifications})},
+ deleteExam:(id,u)=>{needStaff(u);const i=DB.exams.findIndex(e=>e.id===id);if(i<0)throw new Error("Exam not found");const [e]=DB.exams.splice(i,1);DB.notifications.unshift({id:nid(),kind:"exam",stream:e.stream,title:"Exam removed",body:e.module+" exam on "+e.date+" was removed from the timetable ("+e.stream+").",ts:Date.now(),read:false});persistDemo();return lag({exams:DB.exams,notes:DB.notifications})}};
